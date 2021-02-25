@@ -7,7 +7,11 @@ class Board(object):
     def __init__(self):
         self.b = [['b', 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
         self.lb = [0, 0]
-    
+
+        self.g = self.h = self.f = 0
+
+        self.parent = None
+
     #Returns a list of places the blank can be moved to.  Note the use of map and filter.  Good tools for AI
     #programming
     def generateMoves(self):
@@ -20,7 +24,7 @@ class Board(object):
     def makeMove(self,m):
         # It had better be next to the current location.
         if (manhattan_distance_points(m,self.lb) > 1):
-            raise RuntimeError('Bad move executed on board: ' + str(m) + 'lb: ' + str(self.lb))
+            raise RuntimeError('Bad move executed on board: ' + str(m) + ' lb:' + str(self.lb))
         self.b[self.lb[0]][self.lb[1]] = self.b[m[0]][m[1]]
         self.b[m[0]][m[1]] = 'b'
         self.lb = m
@@ -34,7 +38,7 @@ class Board(object):
 
     #are boards equal?
     def __eq__(self,other):
-        return self.b == other.b
+        return self.b == other
     def __ne__(self,other):
         return self.b != other.b
     def key(self):
