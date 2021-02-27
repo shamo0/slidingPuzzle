@@ -66,7 +66,6 @@ def aStar(board, heuristics):
             #making copies of the board before making the moves
             new_state = copy.deepcopy(board)
             new_state.parent = current_board
-            print("Parent: ",new_state.parent)
 
             new_state.makeMove(move)
             print("New State: ", new_state.b)
