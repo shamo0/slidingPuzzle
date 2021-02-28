@@ -61,7 +61,6 @@ def inRange(p):
     return p[0] >= 0 and p[0] < 4 and p[1] >=0 and p[1] < 4
 
 #The heuristics go here
-
 def locate(position):
     endPosition = [['b', 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
 
@@ -81,8 +80,12 @@ def manhattanDistance(current_board):
     manhattan_distance = 0
     for i in range(4):
         for j in range(4):
-            r,c = locate(current_board[i][j])
-            manhattan_distance += abs(i-r) + abs(j-c)
+            if current_board[i][j] =='b':
+                continue
+            else:
+                item = current_board[i][j]
+                actual = [item//4,item%4]
+                manhattan_distance+=manhattan_distance_points([i,j],actual)
     return manhattan_distance
 
 #Calculates the number of misplaced tiles. 
@@ -92,8 +95,10 @@ def misplacedTiles(current_board):
 
     for i in range(4):
         for j in range(4):
-            if (current_board[i][j] != ' '):
+            if (current_board[i][j] != 'b'):
                 if current_board[i][j] != endPosition[i][j]:
                     num_misplaced+=1
+            else:
+                continue
 
     return num_misplaced

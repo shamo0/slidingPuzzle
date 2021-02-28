@@ -1,109 +1,74 @@
+from queue import PriorityQueue
 from Board import *
 from Board import manhattanDistance
 from Board import misplacedTiles
+import copy
 
-class aStar(board=Board.b, heuristics=None):
+def aStar(board, heuristics):
 
-    search = {
-        'manhattanDistance': manhattanDistance,
-        'misplacedTiles' : misplacedTiles,
-    }   
+    path = []
+    number_expanded = 0
+    goal = [['b', 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
 
-    heuristic  = search[str(heuristics)]
+    # #Defining CLOSED and OPEN
+    open_list = []
+    closed_list = []
 
+    open_list.append(board)
 
-    def __init__(self, parent=None, position=None):
-        self.position = position
-        self.parent = parent
+    while len(open_list)>0:
 
-        self.g = 0
-        self.h = 0 
-        self.f = 0
+        board = open_list[0]
+        board_index = 0
 
-    def algorithm(self,start,end):
-        number_expanded = 0
+        for index, item in enumerate(open_list):
+            if item in closed_list:
+                continue
+            elif board.f > item.f:
+                board = item
+                board_index = index
+                board = board
 
-        #Start Node
-        start_node = aStar(None,start)
-        start_node.g = 0
-        start_node.h = 0
-        start_node.f = 0
-
-        #End Node
-        end_node = aStar(None,end)
-        end_node.g = 0
-        end_node.h = 0
-        end_node.f = 0
+        closed_list.append(board)
+        open_list.pop(board_index)
+        number_expanded += 1 
         
-        #Initializing Open and Closed Lists
-        open_list = []
-        closed_list = []
 
-        while open_list:
-
-            current_node = open_list[0]
-            current_node_index = 0
-            
-
-            for index, item in enumerate(open_list):
-                current_node = item
-                current_node_index = index
-            
-            #We pop from Open and append to Closed
-            open_list.pop(current_node_index)
-            closed_list.append(current_node)
-            
-            #The goal is found
-            if current_node == end_node:
-                path = []
-                current = current_node
-                while current:
-                    path.append(current.position)
+        #Check if we are at the goal state
+        if board.__eq__(goal):
+                current = board
+                path.append(current.lb)
+                while current.parent is not None:
+                    path.append(current.parent.lb)
                     current = current.parent
-                
-                return path[::-1], number_expanded
+                return list(reversed(path[:-1])), number_expanded
+                        
+           
+        #Generating Children Nodes
+        children = board.generateMoves()
 
-            children = Board.generateMoves()
+        #Iterating thru the children nodes
+        for move in children:            
+            #making copies of the board before making the moves
+            new_state = copy.deepcopy(board)
+            new_state.parent = board
 
-            for child in children:
-                
-                for i in closed_list:
-                    if child == i:
-                        continue
-                
-                child.g = current_node.g + 1
-                child.h = heuristic(child.position,end_node.position)
-                child.f = child.g + child.h
-                
-                for node in open_list:
-                    if (child == node) and (child.g > node.g):
-                        continue
-                
-                open_list.append(child)
+            new_state.makeMove(move)
 
-            number_expanded += 1 
-
-        return path[::-1], number_expanded
+            new_state.g = board.g + 1
+            new_state.h = heuristics(new_state.b)
+            new_state.f = new_state.g + new_state.h
 
 
-ors(s)
-#         for i in successors:
-#             successor_cost = f_Cost(i)
-#             successor_parent = s
-#         if s not in closed:
-#             CLOSED.append(s)
-#             OPEN.put(s)
+            if (new_state in closed_list):
+                if (new_state.f < closed_list[closed_list.index(new_state)].f):
+                    closed_list[closed_list.index(new_state)].f = new_state.f
+                else:
+                    continue
+            
+            open_list.append(new_state)
 
-#     return OPEN.get()
+        
 
-if __name__ == "__main__":
 
-    astar()
-    # CLOSED = []
-    # OPEN = PriorityQueue()
-
-    # s = startState
     
-    # astar()
-
-
