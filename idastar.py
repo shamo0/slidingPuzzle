@@ -33,7 +33,7 @@ def F_Limited_DFS(board, limit,heuristics):
 
     while done == False:
         board.h = heuristics(board.b)
-        board.f = board.g + board.h
+        board.f = board.g + board.h 
 
         if board.f <= limit:
             #Checking if goal state. If goal return path and # expandend nodes
@@ -51,11 +51,14 @@ def F_Limited_DFS(board, limit,heuristics):
 
                 for move in children:
                     #making copies of the board before making the moves
-                    new_state = copy.deepcopy(board)            
+                    new_state = copy.deepcopy(board)
                     new_state.parent = board
                     new_state.makeMove(move)
                     new_state.g = board.g + 1
-                    open_list.append(new_state)
+ 
+                    if new_state not in open_list:
+                        open_list.append(new_state)
+
         else:
             if (board.f < miniumum) or miniumum==None:
                 miniumum = board.f
